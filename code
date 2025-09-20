@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100000
+
+// Stack implementation
+typedef struct {
+    long long arr[MAX];
+    int top;
+} Stack;
+
+void init(Stack *s) {
+    s->top = -1;
+}
+
+int isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+void push(Stack *s, long long val) {
+    s->arr[++(s->top)] = val;
+}
+
+long long pop(Stack *s) {
+    return s->arr[(s->top)--];
+}
+
+long long peek(Stack *s) {
+    return s->arr[s->top];
+}
+
+// Queue using two stacks
+typedef struct {
+    Stack s1, s2;
+} Queue;
+
+void initQueue(Queue *q) {
+    init(&q->s1);
+    init(&q->s2);
+}
+
+void enqueue(Queue *q, long long x) {
+    push(&q->s1, x);
+}
+
+void transfer(Stack *src, Stack *dest) {
+    while (!isEmpty(src)) {
+        push(dest, pop(src));
+    }
+}
+
+void dequeue(Queue *q) {
+    if (isEmpty(&q->s2)) {
+        transfer(&q->s1, &q->s2);
+    }
+    if (!isEmpty(&q->s2)) {
+        pop(&q->s2);
+    }
+}
+
+void printFront(Queue *q) {
+    if (isEmpty(&q->s2)) {
+        transfer(&q->s1, &q->s2);
+    }
+    if (!isEmpty(&q->s2)) {
+        printf("%lld\n", peek(&q->s2));
+    }
+}
+
+int main() {
+    int q;
+    scanf("%d", &q);
+
+    Queue queue;
+    initQueue(&queue);
+
+    for (int i = 0; i < q; i++) {
+        int type;
+        scanf("%d", &type);
+        if (type == 1) {
+            long long x;
+            scanf("%lld", &x);
+            enqueue(&queue, x);
+        } else if (type == 2) {
+            dequeue(&queue);
+        } else if (type == 3) {
+            printFront(&queue);
+        }
+    }
+
+    return 0;
+}
